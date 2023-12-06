@@ -1,106 +1,63 @@
-def vacuum_world():
-        # initializing goal_state
-        # 0 indicates Clean and 1 indicates Dirty
-    goal_state = {'A': '0', 'B': '0'}
-    cost = 0
+def bfs(src,target):
+    queue = []
+    queue.append(src)
+    
+    exp = []
+    
+    while len(queue) > 0:
+        source = queue.pop(0)
+        exp.append(source)
+        
+        print(source)
+        
+        if source==target:
+            print("success")
+            return
+        
+        poss_moves_to_do = []
+        poss_moves_to_do = possible_moves(source,exp)
+        
+        for move in poss_moves_to_do:
+            
+            if move not in exp and move not in queue:
+                queue.append(move)
+def possible_moves(state,visited_states): 
+    b = state.index(0)
+    d = []
+    if b not in [0,1,2]: 
+        d.append('u')
+    if b not in [6,7,8]: 
+        d.append('d')
+    if b not in [0,3,6]: 
+        d.append('l')
+    if b not in [2,5,8]: 
+        d.append('r')
+    pos_moves_it_can = []
 
-    location_input = input("Enter Location of Vacuum") #user_input of location vacuum is placed
-    status_input = input("Enter status of " + location_input) #user_input if location is dirty or clean
-    status_input_complement = input("Enter status of other room")
-    print("Initial Location Condition" + str(goal_state))
+    for i in d:
+        pos_moves_it_can.append(gen(state,i,b))
+        
+    return [move_it_can for move_it_can in pos_moves_it_can if move_it_can not in visited_states]
+def gen(state, m, b):
+    temp = state.copy()                              
+    
+    if m=='d':
+        temp[b+3],temp[b] = temp[b],temp[b+3]
+    
+    if m=='u':
+        temp[b-3],temp[b] = temp[b],temp[b-3]
+    
+    if m=='l':
+        temp[b-1],temp[b] = temp[b],temp[b-1]
+    
+    if m=='r':
+        temp[b+1],temp[b] = temp[b],temp[b+1]
+    return temp
 
-    if location_input == 'A':
-        # Location A is Dirty.
-        print("Vacuum is placed in Location A")
-        if status_input == '1':
-            print("Location A is Dirty.")
-            # suck the dirt  and mark it as clean
-            goal_state['A'] = '0'
-            cost += 1                      #cost for suck
-            print("Cost for CLEANING A " + str(cost))
-            print("Location A has been Cleaned.")
+src = [1,2,3,0,4,5,6,7,8] 
+target = [1,2,3,4,5,0,6,7,8]  
 
-            if status_input_complement == '1':
-                # if B is Dirty
-                print("Location B is Dirty.")
-                print("Moving right to the Location B. ")
-                cost += 1                       #cost for moving right
-                print("COST for moving RIGHT" + str(cost))
-                # suck the dirt and mark it as clean
-                goal_state['B'] = '0'
-                cost += 1                       #cost for suck
-                print("COST for SUCK " + str(cost))
-                print("Location B has been Cleaned. ")
-            else:
-                print("No action" + str(cost))
-                # suck and mark clean
-                print("Location B is already clean.")
-
-        if status_input == '0':
-            print("Location A is already clean ")
-            if status_input_complement == '1':# if B is Dirty
-                print("Location B is Dirty.")
-                print("Moving RIGHT to the Location B. ")
-                cost += 1                       #cost for moving right
-                print("COST for moving RIGHT " + str(cost))
-                # suck the dirt and mark it as clean
-                goal_state['B'] = '0'
-                cost += 1                       #cost for suck
-                print("Cost for SUCK" + str(cost))
-                print("Location B has been Cleaned. ")
-            else:
-                print("No action " + str(cost))
-                print(cost)
-                # suck and mark clean
-                print("Location B is already clean.")
-
-    else:
-        print("Vacuum is placed in location B")
-        # Location B is Dirty.
-        if status_input == '1':
-            print("Location B is Dirty.")
-            # suck the dirt  and mark it as clean
-            goal_state['B'] = '0'
-            cost += 1  # cost for suck
-            print("COST for CLEANING " + str(cost))
-            print("Location B has been Cleaned.")
-
-            if status_input_complement == '1':
-                # if A is Dirty
-                print("Location A is Dirty.")
-                print("Moving LEFT to the Location A. ")
-                cost += 1  # cost for moving right
-                print("COST for moving LEFT" + str(cost))
-                # suck the dirt and mark it as clean
-                goal_state['A'] = '0'
-                cost += 1  # cost for suck
-                print("COST for SUCK " + str(cost))
-                print("Location A has been Cleaned.")
-
-        else:
-            print(cost)
-            # suck and mark clean
-            print("Location B is already clean.")
-
-            if status_input_complement == '1':  # if A is Dirty
-                print("Location A is Dirty.")
-                print("Moving LEFT to the Location A. ")
-                cost += 1  # cost for moving right
-                print("COST for moving LEFT " + str(cost))
-                # suck the dirt and mark it as clean
-                goal_state['A'] = '0'
-                cost += 1  # cost for suck
-                print("Cost for SUCK " + str(cost))
-                print("Location A has been Cleaned. ")
-            else:
-                print("No action " + str(cost))
-                # suck and mark clean
-                print("Location A is already clean.")
-
-    # done cleaning
-    print("GOAL STATE: ")
-    print(goal_state)
-    print("Performance Measurement: " + str(cost))
-
-
-vacuum_world()
+src= [2,0,3,1,8,4,7,6,5] 
+target=[1,2,3,8,0,4,7,6,5]
+   
+bfs(src, target)
